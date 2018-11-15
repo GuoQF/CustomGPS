@@ -1,9 +1,9 @@
 //
 //  LocationHelper.h
-//  Feimang
+//  G_QF
 //
 //  Created by Fm_Qf on 15/12/22.
-//  Copyright © 2015年 feimang. All rights reserved.
+//  Copyright © 2015年 G_QF. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

@@ -1,9 +1,9 @@
 //
 //  WGS84TOGCJ02.h
-//  CLLocationoManagerUseDemo
+//  G_QF
 //
 //  Created by Fm_Qf on 15-1-5.
-//  Copyright (c) 2015年 zhang jian. All rights reserved.
+//  Copyright (c) 2015年 G_QF. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
