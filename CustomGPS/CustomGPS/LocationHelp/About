@@ -1,0 +1,9 @@
+配置方法：
+1.info.plist 中添加定位隐私权限描述
+key: Privacy - Location When In Use Usage Description  // value:需要您同意下才能访问位置信息
+2.添加loc.gpx文件到项目（里面有坐标信息，可根据需要自己修改）
+3.Product -> Scheme -> Edit scheme -> Run -> Options
+勾选Allow Location Simulation 并设置Default Location 为loc.gpx文件
+4.真机调试就可以加载虚拟位置，可以使用LocationHelp里面的系统定位打印位置信息来确认
+5.！！！！！不可以使用xcode停止运行，直接拔掉数据线就可以保证定位修改成功，之后直接手机退出测试项目打开系统地图查看定位是否修改成功
+注意：使用滴滴打车、共享单车等软件定位后会使虚拟定位失效 或者 重启系统也可以
