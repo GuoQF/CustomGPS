@@ -8,12 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import <CoreLocation/CoreLocation.h>
-
-@interface LocationHelper : NSObject <CLLocationManagerDelegate>
+@interface LocationHelper : NSObject
 
 /**
- *  单例
+ *  shareInstance
  *
  *  @return LocationHelper *
  */
@@ -22,9 +20,9 @@
 /**
  *  获取用户位置信息
  *
- *  @param locationBlock 用户位置 经纬度回调
- *  @param stringBlock   用户位置 省市区回调
+ *  @param locationBlock 用户位置 经纬度信息
+ *  @param stringBlock   用户位置 省市区信息
  */
-- (void)getUserLocationInfomationLoactionBlcok:(void (^)(double latitude, double longitude))locationBlock stringBlock:(void (^)(NSString *country, NSString *province, NSString *city,NSString *area))stringBlock enableBlock:(void(^)(void))enableLocation;
+- (void)getUserLocationInfomationLocationBlcok:(void (^)(double latitude, double longitude))locationBlock stringBlock:(void (^)(NSString *FormattedAddressLines))stringBlock enableBlock:(void(^)(void))enableLocation;
 
 @end

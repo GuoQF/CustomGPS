@@ -8,15 +8,19 @@
 
 #import "LocationHelper.h"
 
+#import <CoreLocation/CoreLocation.h>
 #import "WGS84TOGCJ02.h"
-//#import "SVProgressHUD.h"
+
+@interface LocationHelper ()<CLLocationManagerDelegate>
+
+@end
 
 @implementation LocationHelper
 {
     CLLocationManager *_locationManager;
     
     void (^_locationBlcok)(double ,double);
-    void (^_stringBlock)(NSString *, NSString *, NSString *, NSString *);
+    void (^_stringBlock)(NSString *);
 }
 
 + (LocationHelper *)shareLocationHelper
@@ -40,14 +44,14 @@
     return self;
 }
 
-- (void)getUserLocationInfomationLoactionBlcok:(void (^)(double, double))locationBlock stringBlock:(void (^)(NSString *, NSString *, NSString *, NSString *))stringBlock enableBlock:(void (^)(void))enableLocation
+- (void)getUserLocationInfomationLocationBlcok:(void (^)(double, double))locationBlock stringBlock:(void (^)(NSString *))stringBlock enableBlock:(void (^)(void))enableLocation
 {
     _locationBlcok = locationBlock;
     _stringBlock = stringBlock;
         
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusDenied) {
-//        [SVProgressHUD showInfoWithStatus:@"定位功能未授权"];
+        NSLog(@"kCLAuthorizationStatusDenied ----");
     }else {
         [_locationManager requestWhenInUseAuthorization];
         [_locationManager startUpdatingLocation];
@@ -75,11 +79,8 @@
         
         if (_locationBlcok) {
             _locationBlcok (coord.latitude, coord.longitude);
-            _locationBlcok = nil;
+            _locationBlcok = nil;   // 避免多次触发回调
         }
-        
-        NSLog(@"old-------%@", currenLocation);
-        NSLog(@"new-------%@", newLocation);
 
         // 地理编码
         CLGeocoder *geocoder = [[CLGeocoder alloc] init];
@@ -88,45 +89,8 @@
             if (!error && [placemarks count] > 0) {
                 NSDictionary *dict = [[placemarks firstObject] addressDictionary];
                 
-                NSString *str = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil] encoding:NSUTF8StringEncoding];
-                NSLog(@"str:%@",str);
-                /*
-                 Country:中国 State:河南省 City:洛阳市 SubLocality:xx县
-                 Country:中国 State:北京市 City:北京市市辖区 SubLocality:朝阳区
-                 */
                 if (self->_stringBlock) {
-                    
-                    NSString *Country,*Provinces,*City,*Area;
-                    if ([dict[@"Country"] isEqual:[NSNull null]]) {
-                        Country = @"";
-                    }else {
-                        Country = dict[@"Country"];
-                    }
-                    if ([dict[@"State"] isEqual:[NSNull null]]) {
-                        Provinces = @"";
-                    }else {
-                        Provinces = dict[@"State"];
-                    }
-                    if ([dict[@"City"] isEqual:[NSNull null]]) {
-                        City = @"";
-                    }else {
-                        City = dict[@"City"];
-                    }
-                    if ([dict[@"SubLocality"] isEqual:[NSNull null]]) {
-                        Area = @"";
-                    }else {
-                        Area = dict[@"SubLocality"];
-                    }
-                    
-                    NSArray *citys = @[@"北京", @"天津", @"上海", @"重庆"];
-                    for (NSString *name in citys) {
-                        if ([City hasPrefix:name]) {
-                            City = @"";
-                            break;
-                        }
-                    }
-                    
-                    self->_stringBlock (Country, Provinces, City, Area);
+                    self->_stringBlock ([dict[@"FormattedAddressLines"] firstObject]);
                     self->_stringBlock = nil;
                 }
             }
@@ -140,3 +104,39 @@
 
 
 @end
+
+
+/*
+ {
+    "SubLocality" : "海淀区",
+    "CountryCode" : "CN",
+    "Name" : "西北旺镇",
+    "FormattedAddressLines" : [
+        "中国北京市海淀区"
+    ],
+    "Country" : "中国",
+    "City" : "北京市"
+ }
+ 
+ {
+    "SubLocality" : "洛龙区",
+    "CountryCode" : "CN",
+    "Name" : "洛龙区",
+    "State" : "河南省",
+    "FormattedAddressLines" : [
+        "中国河南省洛阳市洛龙区"
+    ],
+    "Country" : "中国",
+    "City" : "洛阳市"
+ }
+ 
+ {
+    "CountryCode" : "CN",
+    "Name" : "黄海",
+    "FormattedAddressLines" : [
+        "中国黄海"
+    ],
+    "Ocean" : "黄海",
+    "Country" : "中国"
+ }
+ */
